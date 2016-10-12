@@ -20,35 +20,29 @@ def parse_data(sub_file):
 
     results = []
 
-    if not output:
-        return
-    else:
-        data = output.pop().split(',')
+    data = output.pop().split(',')
 
-        # strip data from each row
-        test = data[0].split('[')[0].split('.')[-2]
-        status = data[1]
-        start = data[2]
-        stop = data[3]
+    # strip data from each row
+    test = data[0].split('[')[0].split('.')[-2]
+    status = data[1]
+    start = data[2]
+    stop = data[3]
 
-        results.append({
-            'test-name': test,
-            'status': status,
-            'start': start,
-            'stop': stop
-        })
+    results.append({
+        'test-name': test,
+        'status': status,
+        'start': start,
+        'stop': stop
+    })
     return results
 
 
 def entry_point():
     cls_args = ArgumentParser().parse_args()
     data = []
+
     for _file in os.listdir(cls_args.upgrade_dir):
-        result = parse_data(open(os.path.join(cls_args.upgrade_dir,
-                                              _file)).read())
-
-        if result:
-            data.append(result)
-
+        data.append(parse_data(open(os.path.join(cls_args.upgrade_dir,
+                                                 _file)).read()))
     print data
 
