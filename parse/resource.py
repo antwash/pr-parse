@@ -44,5 +44,6 @@ def entry_point():
     for _file in os.listdir(cls_args.upgrade_dir):
         data.append(parse_data(open(os.path.join(cls_args.upgrade_dir,
                                                  _file)).read()))
-    print data
+    print all(d.pop()['status'] == "success" for d in data)
+
 
