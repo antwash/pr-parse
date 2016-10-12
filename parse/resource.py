@@ -20,8 +20,10 @@ def parse_data(sub_file):
 
     results = []
 
-    for row in output:
-        data = row.split(',')
+    if not output:
+        return
+    else:
+        data = output.pop().split(',')
 
         # strip data from each row
         test = data[0].split('[')[0].split('.')[-2]
@@ -44,8 +46,9 @@ def entry_point():
     for _file in os.listdir(cls_args.upgrade_dir):
         result = parse_data(open(os.path.join(cls_args.upgrade_dir,
                                               _file)).read())
+
         if result:
             data.append(result)
 
-    print result
+    print data
 
