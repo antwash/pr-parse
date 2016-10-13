@@ -21,27 +21,25 @@ def parse_data(sub_file):
     data = output.pop().split(',')
 
     # strip data from each row
+    resource = data[0].split('[')[0].split('.')[-3].split('_', 2)[2]
     action = data[0].split('[')[0].split('.')[-3].split('_')[1]
     status = data[1]
 
-    results = {
-        'action': action,
-        'status': status
-    }
+    results = {'action': action, 'status': status}
 
-    return results
+    return resource, results
 
 
 def entry_point():
     cls_args = ArgumentParser().parse_args()
-    data = {'persistent': []}
+    data = {}
 
     for _file in os.listdir(cls_args.upgrade_dir):
         call = parse_data(open(os.path.join(cls_args.upgrade_dir,
                                             _file)).read())
-        data['persistent'].append(call)
+        if call[0] not in data.keys():
+            data.setdefault(call[0], [])
 
+        data[call[0]].append(call[1])
     print data
-    #print all(d.pop()['status'] == "success" for d in data)
-
 
