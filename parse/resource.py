@@ -18,32 +18,30 @@ class ArgumentParser(argparse.ArgumentParser):
 def parse_data(sub_file):
     output = sub_file.splitlines()[1:]
 
-    results = []
-
     data = output.pop().split(',')
 
     # strip data from each row
-    test = data[0].split('[')[0].split('.')[-2]
+    action = data[0].split('[')[0].split('.')[-3].split('_')[1]
     status = data[1]
-    start = data[2]
-    stop = data[3]
 
-    results.append({
-        'test-name': test,
-        'status': status,
-        'start': start,
-        'stop': stop
-    })
+    results = {
+        'action': action,
+        'status': status
+    }
+
     return results
 
 
 def entry_point():
     cls_args = ArgumentParser().parse_args()
-    data = []
+    data = {'persistent': []}
 
     for _file in os.listdir(cls_args.upgrade_dir):
-        data.append(parse_data(open(os.path.join(cls_args.upgrade_dir,
-                                                 _file)).read()))
-    print all(d.pop()['status'] == "success" for d in data)
+        call = parse_data(open(os.path.join(cls_args.upgrade_dir,
+                                            _file)).read())
+        data['persistent'].append(call)
+
+    print data
+    #print all(d.pop()['status'] == "success" for d in data)
 
 
