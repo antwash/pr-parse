@@ -1,6 +1,8 @@
 import argparse
 import os
 
+from datetime import datetime
+
 
 class ArgumentParser(argparse.ArgumentParser):
     def __init__(self):
@@ -16,30 +18,56 @@ class ArgumentParser(argparse.ArgumentParser):
 
 
 def parse_data(sub_file):
-    output = sub_file.splitlines()[1:]
+    output = open(sub_file).read().splitlines()[1:]
 
-    data = output.pop().split(',')
+    results = {}
 
-    # strip data from each row
-    resource = data[0].split('[')[0].split('.')[-3].split('_', 2)[2]
-    action = data[0].split('[')[0].split('.')[-3].split('_')[1]
-    status = data[1]
+    # if multiple lines in file
+    for line in output:
+        test_name, status, _, _ = line.split(",")
+        _, action, product = test_name.split("[")[0].split(".")[-3].split("_", 2)
 
-    results = {'action': action, 'status': status}
+        # add key to dict
+        if product not in results:
+            results[product] = {}
 
-    return resource, results
+        results[product][action] = status
+
+    return results
+
+
+def parse(path_dir):
+    data = {}
+
+    for _file in os.listdir(path_dir):
+        call = parse_data(os.path.join(path_dir, _file))
+
+        # iterate over keys in returned
+        for key, value in call.items():
+            if key not in data:
+                data[key] = {}
+
+            # add values to key
+            data[key].update(value)
+
+    final_data = {}
+    d_format = "{:%B %d, %Y, %I:%M:%S %p}"
+
+    for product, actions in data.items():
+        status = "success"
+
+        for act in ['create', 'validate', 'cleanup']:
+
+            # gets the status of the action
+            if actions.get(act) != "success":
+                status = "{0}_{1}".format(act, actions.get(act))
+                break
+
+        final_data[product] = {'status': status,
+                               'time': d_format.format(datetime.now())}
+    return final_data
 
 
 def entry_point():
     cls_args = ArgumentParser().parse_args()
-    data = {}
-
-    for _file in os.listdir(cls_args.upgrade_dir):
-        call = parse_data(open(os.path.join(cls_args.upgrade_dir,
-                                            _file)).read())
-        if call[0] not in data.keys():
-            data.setdefault(call[0], [])
-
-        data[call[0]].append(call[1])
-    print data
-
+    print parse(cls_args.upgrade_dir)
