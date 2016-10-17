@@ -24,14 +24,25 @@ def parse_data(sub_file):
 
     # if multiple lines in file
     for line in output:
-        test_name, status, _, _ = line.split(",")
+        test_name, status, start, stop = line.split(",")
         _, action, product = test_name.split("[")[0].split(".")[-3].split("_", 2)
 
         # add key to dict
         if product not in results:
             results[product] = {}
 
-        results[product][action] = status
+        if action is not 'verify':
+            results[product][action] = status
+            results[product]['start'] = start
+            results[product]['stop'] = stop
+            results[product]['service'] = product
+        else:
+            results[product][action] = {
+                action: status,
+                'start': start,
+                'stop': stop,
+                'service': product
+            }
 
     return results
 
@@ -50,11 +61,6 @@ def parse(path_dir):
 
                 # add values to key
                 data[key].update(value)
-
-    d_format = "{:%B %d, %Y, %I:%M:%S %p}"
-
-    for product, actions in data.items():
-        data[product]['time'] = d_format.format(datetime.now())
 
     return data
 
