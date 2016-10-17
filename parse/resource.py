@@ -40,32 +40,23 @@ def parse(path_dir):
     data = {}
 
     for _file in os.listdir(path_dir):
-        call = parse_data(os.path.join(path_dir, _file))
+        if _file.endswith(".csv"):
+            call = parse_data(os.path.join(path_dir, _file))
 
-        # iterate over keys in returned
-        for key, value in call.items():
-            if key not in data:
-                data[key] = {}
+            # iterate over keys in returned
+            for key, value in call.items():
+                if key not in data:
+                    data[key] = {}
 
-            # add values to key
-            data[key].update(value)
+                # add values to key
+                data[key].update(value)
 
-    final_data = {}
     d_format = "{:%B %d, %Y, %I:%M:%S %p}"
 
     for product, actions in data.items():
-        status = "success"
+        data[product]['time'] = d_format.format(datetime.now())
 
-        for act in ['create', 'validate', 'cleanup']:
-
-            # gets the status of the action
-            if actions.get(act) != "success":
-                status = "{0}_{1}".format(act, actions.get(act))
-                break
-
-        final_data[product] = {'status': status,
-                               'time': d_format.format(datetime.now())}
-    return final_data
+    return data
 
 
 def entry_point():
