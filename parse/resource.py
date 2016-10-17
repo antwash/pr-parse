@@ -31,18 +31,17 @@ def parse_data(sub_file):
         if product not in results:
             results[product] = {}
 
-        if action is not 'verify':
-            results[product][action] = status
-            results[product]['start'] = start
-            results[product]['stop'] = stop
-            results[product]['service'] = product
-        else:
-            results[product][action] = {
+        values = {
                 action: status,
-                'start': start,
-                'stop': stop,
-                'service': product
-            }
+                "start": start,
+                "stop": stop,
+                "service": product
+        }
+
+        if action not in results[product]:
+            results[product].setdefault(action, [])
+
+        results[product][action].append(values)
 
     return results
 
@@ -58,8 +57,6 @@ def parse(path_dir):
             for key, value in call.items():
                 if key not in data:
                     data[key] = {}
-
-                # add values to key
                 data[key].update(value)
 
     return data
