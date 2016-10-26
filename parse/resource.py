@@ -1,5 +1,6 @@
 import argparse
 import os
+import json
 
 from datetime import datetime
 
@@ -59,7 +60,7 @@ def parse(path_dir):
                     data[key] = {}
                 data[key].update(value)
 
-    return data
+    return json.dumps(data)
 
 
 def entry_point():
