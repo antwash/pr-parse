@@ -18,7 +18,9 @@ class ArgumentParser(argparse.ArgumentParser):
             default=None, help="The path to the upgrade test directory.")
 
 
-def parse_data(sub_file):
+def parse_data(sub_file, _file):
+
+    name, _ = _file.split(".")
     output = open(sub_file).read().splitlines()[1:]
 
     results = {}
@@ -32,15 +34,19 @@ def parse_data(sub_file):
         if product not in results:
             results[product] = {}
 
+        if action not in results[product]:
+            if action == "verify":
+                if "upgrade" in name:
+                    action = name.split("_")[0]+ "-" + action
+            results[product].setdefault(action, [])
+
         values = {
-                action: status,
+                "task": action,
+                action: 1 if status == "success" else 0,
                 "start": start,
                 "stop": stop,
                 "service": product
-        }
-
-        if action not in results[product]:
-            results[product].setdefault(action, [])
+            }
 
         results[product][action].append(values)
 
@@ -52,7 +58,7 @@ def parse(path_dir):
 
     for _file in os.listdir(path_dir):
         if _file.endswith(".csv"):
-            call = parse_data(os.path.join(path_dir, _file))
+            call = parse_data(os.path.join(path_dir, _file), _file)
 
             # iterate over keys in returned
             for key, value in call.items():
