@@ -6,6 +6,7 @@ setup(
     description='A tool for parsing subunit files from persistent resources during an upgrade',
     author='Anthony D. Washington',
     url='https://github.com/antwash/pr_parse',
+    packages=['parse'],
     install_requires=open('Requirements.txt').read(),
         classifiers=(
         'Development Status :: 4 - Beta',
