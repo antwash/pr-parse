@@ -28,16 +28,24 @@ def parse_data(sub_file, _file):
     # if multiple lines in file
     for line in output:
         test_name, status, start, stop = line.split(",")
-        _, action, product = test_name.split("[")[0].split(".")[-3].split("_", 2)
+
+        # if test fail during setup
+        if "setUpClass" in test_name:
+           _, action, product = test_name.split("(")[1].split(".")[-2].split("_", 2)
+
+           if "object" in product:
+               product = product[:-10]
+        else:
+            _, action, product = test_name.split("[")[0].split(".")[-3].split("_", 2)
 
         # add key to dict
         if product not in results:
             results[product] = {}
 
         if action not in results[product]:
-            if action == "verify":
+            if action == "validate":
                 if "upgrade" in name:
-                    action = name.split("_")[0]+ "-" + action
+                    action = name.split("_")[0] + "-" + action
             results[product].setdefault(action, [])
 
         values = {
