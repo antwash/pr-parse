@@ -31,12 +31,12 @@ def parse_data(sub_file, _file):
 
         # if test fail during setup
         if "setUpClass" in test_name:
-           _, action, product = test_name.split("(")[1].split(".")[-2].split("_", 2)
-
-           if "object" in product:
-               product = product[:-10]
+            _, action, product = test_name.split("(")[1].split(".")[-2].split("_", 2)
         else:
             _, action, product = test_name.split("[")[0].split(".")[-3].split("_", 2)
+
+        if "object" in product:
+            product = product[:-10]
 
         # add key to dict
         if product not in results:
