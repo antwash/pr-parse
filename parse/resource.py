@@ -32,7 +32,9 @@ def parse_data(sub_file, _file):
         # if test fail during setup
         if "setUpClass" in test_name:
             _, action, product = test_name.split("(")[1].split(".")[-2].split("_", 2)
+            test = "test_" + action + "_" + product
         else:
+            test = test_name.split("[")[0].split(".")[-1]
             _, action, product = test_name.split("[")[0].split(".")[-3].split("_", 2)
 
         if "object" in product:
@@ -49,6 +51,7 @@ def parse_data(sub_file, _file):
             results[product].setdefault(action, [])
 
         values = {
+                "test_name": test,
                 "task": action,
                 action: 1 if status == "success" else 0,
                 "start": start,
