@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='pr_parse',
     version='0.0.1',
-    description='A tool for parsing subunit files from persistent resources during an upgrade',
+    description='A tool for parsing subunit files from the persistent resources test during an upgrade',
     author='Anthony D. Washington',
     url='https://github.com/antwash/pr_parse',
     packages=['parse'],
