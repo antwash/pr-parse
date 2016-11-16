@@ -1,8 +1,7 @@
 import argparse
 import os
 import json
-
-from datetime import datetime
+import subprocess
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -64,10 +63,20 @@ def parse_data(sub_file, _file):
     return results
 
 
+def convert_file(path_dir):
+    for _file in os.listdir(path_dir):
+        command = "cat " + _file + "|subunit-1to2|subunit2csv > " + _file + ".csv"
+        action = subprocess.Popen(command, shell=True, stdout=None)
+        action.wait()
+
+
 def parse(path_dir):
     data = {}
 
+    convert_file(path_dir)
+
     for _file in os.listdir(path_dir):
+
         if _file.endswith(".csv"):
             call = parse_data(os.path.join(path_dir, _file), _file)
 
